@@ -1,3 +1,21 @@
+
+(require 'package)
+(add-to-list 'package-archives
+	     '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(add-to-list 'package-archives
+             '("MELPA Stable" . "http://stable.melpa.org/packages/") t)
+
+;; Added by Package.el.  This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
+(package-initialize)
+
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
+
+
 (setenv "PATH" (concat "/usr/local/bin:" (getenv "PATH")))
 (setq exec-path (append exec-path '("/usr/local/bin")))
 
@@ -38,10 +56,6 @@
 
 
 ;;; Go stuff
-
-(require 'package)
-(add-to-list 'package-archives
-	     '("melpa" . "http://melpa.milkbox.net/packages/") t)
 
 (defun set-exec-path-from-shell-PATH ()
   (let ((path-from-shell (replace-regexp-in-string
@@ -86,7 +100,7 @@
 (setq-default js2-global-externs
               '("module" "require" "buster" "sinon" "assert" "refute" "setTimeout"
                 "clearTimeout" "setInterval" "clearInterval" "location" "__dirname"
-                "console" "JSON" "include" "process"))
+                "console" "JSON" "include" "process" "Buffer"))
 
 ;(setq js-doc-mail-address "your email address"
 ;       js-doc-author (format "your name <%s>" js-doc-mail-address)
