@@ -1,3 +1,4 @@
+;;; Code:
 
 (require 'package)
 (add-to-list 'package-archives
@@ -11,9 +12,14 @@
 ;; You may delete these explanatory comments.
 (package-initialize)
 
-(use-package flycheck
-  :ensure t
-  :init (global-flycheck-mode))
+(elpy-enable)
+(setq elpy-rpc-backend "jedi")
+(add-hook 'python-mode-hook 'jedi:setup)
+(setq jedi:complete-on-dot t) 
+
+;(use-package flycheck
+;  :ensure t
+;  :init (global-flycheck-mode))
 
 
 (setenv "PATH" (concat "/usr/local/bin:" (getenv "PATH")))
@@ -25,6 +31,9 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(column-number-mode t)
+ '(package-selected-packages
+   (quote
+    (jedi elpy python-mode yasnippet yaml-mode use-package json-mode js2-mode js-doc go-guru go-autocomplete flycheck exec-path-from-shell)))
  '(scroll-bar-mode nil)
  '(tool-bar-mode nil)
  '(tooltip-mode nil))
@@ -82,16 +91,31 @@
   (if (not (string-match "go" compile-command))
       (set (make-local-variable 'compile-command)
            "go generate && go build -v && go test -v && go vet"))
-  ; Go oracle
-  (load-file "$GOPATH/src/golang.org/x/tools/cmd/oracle/oracle.el")
-  ; Godef jump key binding
-  (local-set-key (kbd "M-.") 'godef-jump))
+
+ (local-set-key (kbd "M-.") 'godef-jump)         ; Go to definition
+ (local-set-key (kbd "M-*") 'pop-tag-mark)       ; Return from whence you came
+ (local-set-key (kbd "M-p") 'compile)            ; Invoke compiler
+ (local-set-key (kbd "M-P") 'recompile)          ; Redo most recent compile cmd
+ (local-set-key (kbd "M-]") 'next-error)         ; Go to next error (or msg)
+ (local-set-key (kbd "M-[") 'previous-error)     ; Go to previous error or msg
+ (local-set-key (kbd "M-TAB") 'auto-complete)
+ (local-set-key (kbd "C-c d") 'godoc-at-point)
+ )
+
 (add-hook 'go-mode-hook 'my-go-mode-hook)
+  
 (defun auto-complete-for-go ()
-  (auto-complete-mode 1))
+  (auto-complete-mode 1)
+   )
+
 (add-hook 'go-mode-hook 'auto-complete-for-go)
-(with-eval-after-load 'go-mode
-   (require 'go-autocomplete))
+
+
+(require 'go-autocomplete)
+(require 'auto-complete-config)
+(ac-config-default)
+
+(require 'go-guru)
 
 
 ;;;; javascript mode
@@ -102,10 +126,10 @@
                 "clearTimeout" "setInterval" "clearInterval" "location" "__dirname"
                 "console" "JSON" "include" "process" "Buffer"))
 
-;(setq js-doc-mail-address "your email address"
-;       js-doc-author (format "your name <%s>" js-doc-mail-address)
-;       js-doc-url "url of your website"
-;       js-doc-license "license name")
+(setq js-doc-mail-address "your email address"
+       js-doc-author (format "your name <%s>" js-doc-mail-address)
+       js-doc-url "url of your website"
+       js-doc-license "license name")
 
 (eval-after-load 'js2-mode
   (add-hook 'js2-mode-hook
@@ -123,4 +147,8 @@
       (require 'tern-auto-complete)
       (auto-complete-mode 1)
       (tern-ac-setup)))
+
+(auto-complete-mode 1)
+
+
 
